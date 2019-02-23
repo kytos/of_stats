@@ -23,8 +23,8 @@ class TestRRD(unittest.TestCase):
         Test if the average is 1 at 1234567810 (second).
         """
         # Mock will return a temporary file for rrd file.
-        f, rrd_file = mkstemp('.rrd')
-        os.close(f)
+        file, rrd_file = mkstemp('.rrd')
+        os.close(file)
         get_rrd_method.return_value = rrd_file
 
         start = 1234567800 - STATS_INTERVAL  # can't update using start time
@@ -33,10 +33,10 @@ class TestRRD(unittest.TestCase):
 
         def update_rrd(multiplier):
             """Update rrd."""
-            rx = tx = multiplier * STATS_INTERVAL
-            tstamp = start + rx
+            rx_arg = tx_arg = multiplier * STATS_INTERVAL
+            tstamp = start + rx_arg
             # any value for index is OK
-            rrd.update([None], tstamp, rx=rx, tx=tx)
+            rrd.update([None], tstamp, rx=rx_arg, tx=tx_arg)
 
         update_rrd(1)
         update_rrd(3)
@@ -51,9 +51,10 @@ class TestRRD(unittest.TestCase):
         self.assertEqual((1.0, 1.0), rows[0])
 
     @patch('napps.kytos.of_stats.stats.Path')
-    def test_non_existent_rrd(self, path_mock):
+    def test_non_existent_rrd(self):
         """Test fetch_latest with non existent rrd."""
-        obj = path_mock.return_value.exists.return_value = False
+        # obj = path_mock.return_value.exists.return_value = False
+        # was not being used
         rrd = RRD('app_folder', ['data_source'])
         row = rrd.fetch_latest('index')
         self.assertEqual(row, {})

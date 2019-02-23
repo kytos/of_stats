@@ -24,8 +24,8 @@ class StatsAPI(metaclass=ABCMeta):
         """Return Flask response for port stats."""
         try:
             data = self._get_points_data(index, n_points)
-        except FileNotFoundError as e:
-            data = self._get_rrd_not_found_error(e)
+        except FileNotFoundError as exception:
+            data = self._get_rrd_not_found_error(exception)
         return self._get_response(data)
 
     def _get_points_data(self, index, n_points):
@@ -148,6 +148,7 @@ class PortStatsAPI(StatsAPI):
 
     @staticmethod
     def get_random_port_stats():
+        """Responsible for getting the stats for the ports."""
         stats = {'data': {
             'timestamps': list(range(1508532494, 1508533094, 10)),
             'rx_bytes': [randint(100_000, 1_000_000) for _ in range(30)],
@@ -169,7 +170,7 @@ class PortStatsAPI(StatsAPI):
             row['name'] = iface.name
             row['mac'] = iface.address
             row['speed'] = self._get_speed(iface)
-            yield self._add_utilization(row, iface)
+            yield self._add_utilization(row)
 
     def get_stats(self):
         """See :meth:`get_port_stats`."""
@@ -195,8 +196,9 @@ class PortStatsAPI(StatsAPI):
             iface.set_custom_speed(user_speed)
         return iface.speed
 
-    def _add_utilization(self, row, iface):
+    def _add_utilization(self, row):
         """Calculate utilization and also add port number."""
+        # iface argument was not being used, so it was removed
         speed = row['speed']
         if speed is None:
             for util_col in self._util_cols.values():

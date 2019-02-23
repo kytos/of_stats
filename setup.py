@@ -12,7 +12,6 @@ from subprocess import call, check_call
 
 from setuptools import Command, setup
 from setuptools.command.develop import develop
-# from setuptools.command.egg_info import egg_info
 from setuptools.command.install import install
 
 if 'bdist_wheel' in sys.argv:
@@ -75,7 +74,8 @@ class TestCoverage(SimpleCommand):
 
     def run(self):
         """Run unittest quietly and display coverage report."""
-        cmd = 'coverage3 run --source=. setup.py test && coverage3 report'
+        cmd = 'coverage3 run -m unittest discover -qs napps/kytos' \
+              ' && coverage3 report'
         call(cmd, shell=True)
 
 
@@ -87,8 +87,7 @@ class Linter(SimpleCommand):
     def run(self):
         """Run yala."""
         print('Yala is running. It may take several seconds...')
-        check_call('yala *.py',
-                   shell=True)
+        check_call('yala *.py', shell=True)
 
 
 class CITest(SimpleCommand):
@@ -128,22 +127,6 @@ class InstallMode(install):
         print(self.description)
 
 
-# class EggInfo(egg_info):
-#     """Prepare files to be packed."""
-#
-#     def run(self):
-#         """Build css."""
-#         self._install_deps_wheels()
-#         super().run()
-#
-#     @staticmethod
-#     def _install_deps_wheels():
-#         """Python wheels are much faster (no compiling)."""
-#         print('Installing dependencies...')
-#         check_call([sys.executable, '-m', 'pip', 'install', '-r',
-#                     'requirements/run.in'])
-
-
 class DevelopMode(develop):
     """Recommended setup for kytos-napps developers.
 
@@ -151,7 +134,7 @@ class DevelopMode(develop):
     created on the system aiming the current source code.
     """
 
-    description = 'install NApps in development mode'
+    description = 'Install NApps in development mode'
 
     def run(self):
         """Install the package in a developer mode."""
@@ -179,13 +162,6 @@ class DevelopMode(develop):
         (ENABLED_PATH / 'kytos').mkdir(parents=True, exist_ok=True)
         dst = ENABLED_PATH / Path('kytos', 'of_stats')
         symlink_if_different(dst, src)
-
-    # @staticmethod
-    # def _create_file_symlinks():
-    #     """Symlink to required files."""
-    #     src = ENABLED_PATH / '__init__.py'
-    #     dst = CURRENT_DIR / 'napps' / '__init__.py'
-    #     symlink_if_different(src, dst)
 
 
 def symlink_if_different(path, target):
@@ -221,11 +197,9 @@ setup(name=NAPP_NAME,
           'clean': Cleaner,
           'ci': CITest,
           'coverage': TestCoverage,
-
           'develop': DevelopMode,
           'install': InstallMode,
           'lint': Linter,
-          # 'egg_info': EggInfo,
       },
       zip_safe=False,
       classifiers=[

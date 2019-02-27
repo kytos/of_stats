@@ -1,5 +1,3 @@
-"""Tests from of_stats napp."""
-
 import sys
 import os
 from pathlib import Path
@@ -9,6 +7,8 @@ if 'VIRTUAL_ENV' in os.environ:
 else:
     BASE_ENV = Path('/')
 
-OF_STATS_PATH = BASE_ENV / '/var/lib/kytos/'
+#STATUS_NAPP_PATH = BASE_ENV / '/var/lib/kytos/napps/..'
 
-sys.path.insert(0, str(OF_STATS_PATH))
+STATUS_NAPP_PATH = str(BASE_ENV) + '/var/lib/kytos/'
+
+sys.path.insert(0, str(STATUS_NAPP_PATH))

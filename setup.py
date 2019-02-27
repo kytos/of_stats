@@ -178,6 +178,14 @@ setup(name='kytos-napps',
       author_email='of-ng-dev@ncc.unesp.br',
       license='MIT',
       install_requires=REQUIREMENTS,
+      extras_require={
+          'dev': [
+              'coverage',
+              'pip-tools',
+              'yala',
+              'tox',
+          ],
+      },
       cmdclass={
           'clean': Cleaner,
           'ci': CITest,

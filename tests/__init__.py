@@ -9,6 +9,6 @@ else:
 
 #STATUS_NAPP_PATH = BASE_ENV / '/var/lib/kytos/napps/..'
 
-STATUS_NAPP_PATH = str(BASE_ENV) + '/var/lib/kytos/'
+STATUS_NAPP_PATH = str(BASE_ENV) + '/var/lib/kytos/napps/kytos/'
 
-sys.path.insert(0, str(STATUS_NAPP_PATH))
+sys.path.insert(0, STATUS_NAPP_PATH)

@@ -9,6 +9,6 @@ if 'VIRTUAL_ENV' in os.environ:
 else:
     BASE_ENV = Path('/')
 
-OF_STATS_PATH = BASE_ENV / '/var/lib/kytos/napps/..'
+OF_STATS_PATH = BASE_ENV / '/var/lib/kytos/'
 
 sys.path.insert(0, str(OF_STATS_PATH))

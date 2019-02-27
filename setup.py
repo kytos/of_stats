@@ -1,7 +1,9 @@
 """Setup script.
+
 Run "python3 setup.py --help-commands" to list all available commands and their
 descriptions.
 """
+
 import os
 import shutil
 import sys
@@ -23,8 +25,8 @@ if 'VIRTUAL_ENV' in os.environ:
 else:
     BASE_ENV = Path('/')
 
-NAPP_NAME = 'topology'
-NAPP_VERSION = '3.4.0'
+NAPP_NAME = 'of_stats'
+NAPP_VERSION = '1.1.0'
 
 # Kytos var folder
 VAR_PATH = BASE_ENV / 'var' / 'lib' / 'kytos'
@@ -46,6 +48,7 @@ class SimpleCommand(Command):
     @abstractmethod
     def run(self):
         """Run when command is invoked.
+
         Use *call* instead of *check_call* to ignore failures.
         """
 
@@ -145,6 +148,7 @@ class EggInfo(egg_info):
 
 class DevelopMode(develop):
     """Recommended setup for kytos-napps developers.
+
     Instead of copying the files to the expected directories, a symlink is
     created on the system aiming the current source code.
     """
@@ -164,6 +168,7 @@ class DevelopMode(develop):
     @staticmethod
     def _create_folder_symlinks():
         """Symlink to all Kytos NApps folders.
+
         ./napps/kytos/napp_name will generate a link in
         var/lib/kytos/napps/.installed/kytos/napp_name.
         """

@@ -1,7 +1,7 @@
 """Test of.stats app."""
 import os
-import unittest
 from tempfile import mkstemp
+import unittest
 from unittest.mock import patch  # noqa (isort conflict)
 
 from napps.kytos.of_stats.settings import STATS_INTERVAL
@@ -33,10 +33,10 @@ class TestRRD(unittest.TestCase):
 
         def update_rrd(multiplier):
             """Update rrd."""
-            rx_arg = tx_arg = multiplier * STATS_INTERVAL
-            tstamp = start + rx_arg
+            rx_value = tx_value = multiplier * STATS_INTERVAL
+            tstamp = start + rx_value
             # any value for index is OK
-            rrd.update([None], tstamp, rx=rx_arg, tx=tx_arg)
+            rrd.update([None], tstamp, rx=rx_value, tx=tx_value)
 
         update_rrd(1)
         update_rrd(3)

@@ -23,6 +23,17 @@ Fixed
 Security
 ========
 
+[UNRELEASED] - Under development
+********************************
+Changed
+=======
+- Continuos integration enabled at scrutinizer.
+
+Fixed
+=====
+- Fix lint issues.
+
+
 [1.1.0] - 2018-04-20
 ********************
 Added

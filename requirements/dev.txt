@@ -9,7 +9,7 @@
 astroid==1.5.3            # via pylint
 click==6.7                # via flask
 colorama==0.3.9           # via radon
-coverage==4.4.1
+coverage==5.0.3
 docopt==0.6.2             # via yala
 flake8-polyfill==1.0.1    # via radon
 flake8==3.4.1             # via flake8-polyfill

@@ -170,9 +170,6 @@ class DevelopMode(develop):
         dst = CURR_DIR / 'napps' / '__init__.py'
         src.symlink_to(dst)
 
-
-requirements = [i.strip() for i in open("requirements.txt").readlines()]
-
 setup(name='kytos-napps',
       version='2017.1b3',
       description='Core Napps developed by Kytos Team',
@@ -180,7 +177,9 @@ setup(name='kytos-napps',
       author='Kytos Team',
       author_email='of-ng-dev@ncc.unesp.br',
       license='MIT',
-      install_requires=requirements,
+      install_requires=[line.strip()
+                        for line in open("requirements/run.txt").readlines()
+                        if not line.startswith('#')],
       cmdclass={
           'clean': Cleaner,
           'ci': CITest,

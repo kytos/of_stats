@@ -31,4 +31,4 @@ six==1.11.0               # via astroid, mando, pydocstyle, pylint
 snowballstemmer==1.2.1    # via pydocstyle
 werkzeug==0.12.2          # via flask
 wrapt==1.10.11            # via astroid
-yala==1.2.0
+yala==1.7.0

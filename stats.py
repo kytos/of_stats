@@ -6,9 +6,9 @@ from pathlib import Path
 import pyof.v0x01.controller2switch.common as v0x01
 import rrdtool
 from kytos.core import KytosEvent, log
-from napps.kytos.of_core.flow import PortStats as OFCorePortStats
 # v0x01 and v0x04 PortStats are version independent
 from napps.kytos.of_core.flow import FlowFactory
+from napps.kytos.of_core.flow import PortStats as OFCorePortStats
 # Disable warning about ungrouped pyof imports due to isort
 from pyof.v0x01.common.phy_port import Port  # pylint: disable=C0412
 from pyof.v0x01.controller2switch.common import AggregateStatsRequest

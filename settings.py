@@ -8,7 +8,7 @@ STATS_INTERVAL = 60
 # STATS_INTERVAL = 1  # 1 second for testing - check RRD._get_archives()
 
 #: Avoid segmentation fault
-rrd_lock = Lock()
+RRD_LOCK = Lock()
 
 # RRD Tool Settings
 

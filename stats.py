@@ -6,17 +6,17 @@ from pathlib import Path
 import pyof.v0x01.controller2switch.common as v0x01
 import rrdtool
 from kytos.core import KytosEvent, log
-from pyof.v0x04.controller2switch import multipart_request as v0x04
+from napps.kytos.of_core.flow import PortStats as OFCorePortStats
 # v0x01 and v0x04 PortStats are version independent
 from napps.kytos.of_core.flow import FlowFactory
-from napps.kytos.of_core.flow import PortStats as OFCorePortStats
 # Disable warning about ungrouped pyof imports due to isort
 from pyof.v0x01.common.phy_port import Port  # pylint: disable=C0412
 from pyof.v0x01.controller2switch.common import AggregateStatsRequest
 from pyof.v0x01.controller2switch.stats_request import StatsRequest, StatsType
-
+from pyof.v0x04.controller2switch import multipart_request as v0x04
 from pyof.v0x04.controller2switch.common import MultipartType
 from pyof.v0x04.controller2switch.multipart_request import MultipartRequest
+
 from . import settings
 
 
@@ -83,7 +83,7 @@ class RRD:
             tstamp = 'N'
         rrd = self.get_or_create_rrd(index)
         data = ':'.join(str(ds_values[ds]) for ds in self._ds)
-        with settings.rrd_lock:
+        with settings.RRD_LOCK:
             rrdtool.update(rrd, '{}:{}'.format(tstamp, data))
 
     def get_rrd(self, index):
@@ -151,7 +151,7 @@ class RRD:
                    str(settings.STATS_INTERVAL)]
         options.extend([get_counter(ds) for ds in self._ds])
         options.extend(self._get_archives())
-        with settings.rrd_lock:
+        with settings.RRD_LOCK:
             rrdtool.create(*options)
 
     def fetch(self, index, start=None, end=None, n_points=None):
@@ -197,7 +197,7 @@ class RRD:
 
         args = [rrd, 'AVERAGE', '--start', str(start), '--end', str(end)]
         args.extend(res_args)
-        with settings.rrd_lock:
+        with settings.RRD_LOCK:
             tstamps, cols, rows = rrdtool.fetch(*args)
         start, stop, step = tstamps
         # rrdtool range is different from Python's.
@@ -212,7 +212,7 @@ class RRD:
         if start is None:  # Latest n_points
             start = end - n_points * settings.STATS_INTERVAL
         elif start == 'first':  # Usually empty because 'first' is too old
-            with settings.rrd_lock:
+            with settings.RRD_LOCK:
                 start = rrdtool.first(rrd)
 
         # For RRDtool to include start and end timestamps.

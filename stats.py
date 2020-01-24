@@ -30,18 +30,17 @@ class Stats(metaclass=ABCMeta):
 
         Args:
             msg_out_buffer: Where to send events.
+
         """
         self._buffer = msg_out_buffer
 
     @abstractmethod
     def request(self, conn):
         """Request statistics."""
-        pass
 
     @abstractmethod
     def listen(self, switch, stats):
         """Listen statistic replies."""
-        pass
 
     def _send_event(self, req, conn):
         event = KytosEvent(
@@ -63,6 +62,7 @@ class RRD:
             app_folder (str): Parent folder for dpids folders.
             data_sources (iterable): Data source names (e.g. tx_bytes,
                 rx_bytes).
+
         """
         self._app = app_folder
         self._ds = data_sources
@@ -77,12 +77,13 @@ class RRD:
             tstamp (str, int): Unix timestamp in seconds. Defaults to now.
 
         Create rrd if necessary.
+
         """
         if tstamp is None:
             tstamp = 'N'
         rrd = self.get_or_create_rrd(index)
         data = ':'.join(str(ds_values[ds]) for ds in self._ds)
-        with settings.rrd_lock:
+        with settings.RRD_LOCK:
             rrdtool.update(rrd, '{}:{}'.format(tstamp, data))
 
     def get_rrd(self, index):
@@ -115,6 +116,7 @@ class RRD:
             index (list of str): Index for the RRD database. Examples:
                 [dpid], [dpid, port_no], [dpid, table id, flow hash].
             tstamp (str, int): Value for start argument of RRD creation.
+
         """
         if tstamp is None:
             tstamp = 'N'
@@ -136,10 +138,11 @@ class RRD:
             rrd (str): Path of RRD file to be created.
             tstamp (str, int): Unix timestamp in seconds for RRD creation.
                 Defaults to now.
+
         """
-        def get_counter(ds):
+        def get_counter(ds_value):
             """Return a DS for rrd creation."""
-            return 'DS:{}:COUNTER:{}:{}:{}'.format(ds, settings.TIMEOUT,
+            return 'DS:{}:COUNTER:{}:{}:{}'.format(ds_value, settings.TIMEOUT,
                                                    settings.MIN, settings.MAX)
 
         if tstamp is None:
@@ -148,7 +151,7 @@ class RRD:
                    str(settings.STATS_INTERVAL)]
         options.extend([get_counter(ds) for ds in self._ds])
         options.extend(self._get_archives())
-        with settings.rrd_lock:
+        with settings.RRD_LOCK:
             rrdtool.create(*options)
 
     def fetch(self, index, start=None, end=None, n_points=None):
@@ -194,7 +197,7 @@ class RRD:
 
         args = [rrd, 'AVERAGE', '--start', str(start), '--end', str(end)]
         args.extend(res_args)
-        with settings.rrd_lock:
+        with settings.RRD_LOCK:
             tstamps, cols, rows = rrdtool.fetch(*args)
         start, stop, step = tstamps
         # rrdtool range is different from Python's.
@@ -209,7 +212,7 @@ class RRD:
         if start is None:  # Latest n_points
             start = end - n_points * settings.STATS_INTERVAL
         elif start == 'first':  # Usually empty because 'first' is too old
-            with settings.rrd_lock:
+            with settings.RRD_LOCK:
                 start = rrdtool.first(rrd)
 
         # For RRDtool to include start and end timestamps.
@@ -285,20 +288,20 @@ class PortStats(Stats):
                     ' tx_bytes %s, rx_dropped %s, tx_dropped %s,' \
                     ' rx_errors %s, tx_errors %s'
 
-        for ps in ports_stats:
-            cls._update_controller_interface(switch, ps)
-            cls.rrd.update((switch.id, ps.port_no.value),
-                           rx_bytes=ps.rx_bytes.value,
-                           tx_bytes=ps.tx_bytes.value,
-                           rx_dropped=ps.rx_dropped.value,
-                           tx_dropped=ps.tx_dropped.value,
-                           rx_errors=ps.rx_errors.value,
-                           tx_errors=ps.tx_errors.value)
+        for port_stat in ports_stats:
+            cls._update_controller_interface(switch, port_stat)
+            cls.rrd.update((switch.id, port_stat.port_no.value),
+                           rx_bytes=port_stat.rx_bytes.value,
+                           tx_bytes=port_stat.tx_bytes.value,
+                           rx_dropped=port_stat.rx_dropped.value,
+                           tx_dropped=port_stat.tx_dropped.value,
+                           rx_errors=port_stat.rx_errors.value,
+                           tx_errors=port_stat.tx_errors.value)
 
-            log.debug(debug_msg, ps.port_no.value, switch.id,
-                      ps.rx_bytes.value, ps.tx_bytes.value,
-                      ps.rx_dropped.value, ps.tx_dropped.value,
-                      ps.rx_errors.value, ps.tx_errors.value)
+            log.debug(debug_msg, port_stat.port_no.value, switch.id,
+                      port_stat.rx_bytes.value, port_stat.tx_bytes.value,
+                      port_stat.rx_dropped.value, port_stat.tx_dropped.value,
+                      port_stat.rx_errors.value, port_stat.tx_errors.value)
 
     @staticmethod
     def _update_controller_interface(switch, port_stats):
@@ -329,16 +332,16 @@ class AggregateStats(Stats):
         debug_msg = 'Received aggregate stats from switch {}:' \
                     ' packet_count {}, byte_count {}, flow_count {}'
 
-        for ag in aggregate_stats:
+        for aggregate in aggregate_stats:
             # need to choose the _id to aggregate_stats
             # this class isn't used yet.
             cls.rrd.update((switch.id,),
-                           packet_count=ag.packet_count.value,
-                           byte_count=ag.byte_count.value,
-                           flow_count=ag.flow_count.value)
+                           packet_count=aggregate.packet_count.value,
+                           byte_count=aggregate.byte_count.value,
+                           flow_count=aggregate.flow_count.value)
 
-            log.debug(debug_msg, switch.id, ag.packet_count.value,
-                      ag.byte_count.value, ag.flow_count.value)
+            log.debug(debug_msg, switch.id, aggregate.packet_count.value,
+                      aggregate.byte_count.value, aggregate.flow_count.value)
 
 
 class FlowStats(Stats):
@@ -366,8 +369,8 @@ class FlowStats(Stats):
     def listen(cls, switch, flows_stats):
         """Receive flow stats."""
         flow_class = FlowFactory.get_class(switch)
-        for fs in flows_stats:
-            flow = flow_class.from_of_flow_stats(fs, switch)
+        for flow_stat in flows_stats:
+            flow = flow_class.from_of_flow_stats(flow_stat, switch)
 
             # Update controller's flow
             controller_flow = switch.get_flow_by_id(flow.id)

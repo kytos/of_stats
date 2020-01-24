@@ -9,7 +9,7 @@
 astroid==1.5.3            # via pylint
 click==6.7                # via flask
 colorama==0.3.9           # via radon
-coverage==4.4.1
+coverage==5.0.3
 docopt==0.6.2             # via yala
 flake8-polyfill==1.0.1    # via radon
 flake8==3.4.1             # via flake8-polyfill
@@ -31,4 +31,4 @@ six==1.11.0               # via astroid, mando, pydocstyle, pylint
 snowballstemmer==1.2.1    # via pydocstyle
 werkzeug==0.12.2          # via flask
 wrapt==1.10.11            # via astroid
-yala==1.2.0
+yala==1.7.0

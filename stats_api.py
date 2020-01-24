@@ -24,8 +24,8 @@ class StatsAPI(metaclass=ABCMeta):
         """Return Flask response for port stats."""
         try:
             data = self._get_points_data(index, n_points)
-        except FileNotFoundError as e:
-            data = self._get_rrd_not_found_error(e)
+        except FileNotFoundError as err:
+            data = self._get_rrd_not_found_error(err)
         return self._get_response(data)
 
     def _get_points_data(self, index, n_points):
@@ -148,6 +148,7 @@ class PortStatsAPI(StatsAPI):
 
     @staticmethod
     def get_random_port_stats():
+        """Generate a random port stats."""
         stats = {'data': {
             'timestamps': list(range(1508532494, 1508533094, 10)),
             'rx_bytes': [randint(100_000, 1_000_000) for _ in range(30)],
@@ -195,7 +196,7 @@ class PortStatsAPI(StatsAPI):
             iface.set_custom_speed(user_speed)
         return iface.speed
 
-    def _add_utilization(self, row, iface):
+    def _add_utilization(self, row, iface):  # pylint: disable=unused-argument
         """Calculate utilization and also add port number."""
         speed = row['speed']
         if speed is None:

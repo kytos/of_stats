@@ -1,6 +1,9 @@
 ########
 Overview
 ########
+
+|License| |Build| |Coverage| |Quality|
+
 In order to manage a network, an administrator must have updated and reliable
 statistics about it, in several levels of deepness, from a
 switch port inbound and outbound traffic to the traffic of different connected
@@ -210,3 +213,14 @@ recreate them as needed after you run (no need to restart the NApp):
 
    rm -rf rrd/flows rrd/ports
 
+.. |License| image:: https://img.shields.io/github/license/kytos/kytos.svg
+   :target: https://github.com/kytos/of_stats/blob/master/LICENSE
+.. |Build| image:: https://scrutinizer-ci.com/g/kytos/of_stats/badges/build.png?b=master
+  :alt: Build status
+  :target: https://scrutinizer-ci.com/g/kytos/of_stats/?branch=master
+.. |Coverage| image:: https://scrutinizer-ci.com/g/kytos/of_stats/badges/coverage.png?b=master
+  :alt: Code coverage
+  :target: https://scrutinizer-ci.com/g/kytos/of_stats/?branch=master
+.. |Quality| image:: https://scrutinizer-ci.com/g/kytos/of_stats/badges/quality-score.png?b=master
+  :alt: Code-quality score
+  :target: https://scrutinizer-ci.com/g/kytos/of_stats/?branch=master

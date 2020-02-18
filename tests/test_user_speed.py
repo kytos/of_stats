@@ -33,7 +33,7 @@ class TestUserSpeed(unittest.TestCase):
 
     def test_default(self):
         """Test the default for all switches."""
-        self.set_file_content('{"default": 42}')
+        self.set_file_content('{"default": 42000000000}')
         self.assertEqual(42 * 10**9, UserSpeed().get_speed('dpid'))
         self.assertEqual(42 * 10**9, UserSpeed().get_speed('dpid', 4))
 
@@ -45,11 +45,13 @@ class TestUserSpeed(unittest.TestCase):
 
     def test_dpid_default(self):
         """Return default speed for dpid."""
-        self.set_file_content('{"dpid": {"default": 42}}')
+        self.set_file_content('{"dpid": {"default": 42000000000}}')
         self.assertEqual(42 * 10**9, UserSpeed().get_speed('dpid'))
         self.assertEqual(42 * 10**9, UserSpeed().get_speed('dpid', 1))
 
     def test_port_speed(self):
         """Return the speed defined for that port, ignoring defaults."""
-        self.set_file_content('{"default": 1, "dpid": {"default": 2, "4": 3}}')
-        self.assertEqual(3 * 10**9, UserSpeed().get_speed('dpid', 4))
+        self.set_file_content(
+            '{"default": 1, "dpid": {"default": 2000000000, "4": 3000000000}}'
+        )
+        self.assertEqual(3 * 10 ** 9, UserSpeed().get_speed("dpid", 4))

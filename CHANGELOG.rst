@@ -7,9 +7,13 @@ All notable changes to the kytos-napps project will be documented in this file.
 ********************************
 Added
 =====
+- Added support for automated tests and CI with Travis.
 
 Changed
 =======
+- Changed README.rst to include some info badges.
+- Yala substitutes Pylama as the main linter checker.
+- Updated requirements.
 
 Deprecated
 ==========
@@ -19,6 +23,10 @@ Removed
 
 Fixed
 =====
+- Enable of_stats in Scrutinizer.
+- Fixed some linter issues.
+- Fixed user_speed unit test.
+- Fixed setup.py changing it to one inspired by of_core.
 
 Security
 ========

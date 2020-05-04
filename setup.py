@@ -3,7 +3,6 @@
 Run "python3 setup.py --help-commands" to list all available commands and their
 descriptions.
 """
-import json
 import os
 import shutil
 import sys
@@ -25,6 +24,8 @@ if 'VIRTUAL_ENV' in os.environ:
 else:
     BASE_ENV = Path('/')
 
+NAPP_NAME = 'of_stats'
+NAPP_VERSION = '1.1.0'
 # Kytos var folder
 VAR_PATH = BASE_ENV / 'var' / 'lib' / 'kytos'
 # Path for enabled NApps
@@ -200,15 +201,8 @@ def symlink_if_different(path, target):
         path.symlink_to(target)
 
 
-def read_version_from_json():
-    """Read the NApp version from NApp kytos.json file."""
-    file = Path('kytos.json')
-    metadata = json.loads(file.read_text())
-    return metadata['version']
-
-
-setup(name='kytos_of_stats',
-      version=read_version_from_json(),
+setup(name=NAPP_NAME,
+      version=NAPP_VERSION,
       description='Core NApps developed by Kytos Team',
       url='http://github.com/kytos/of_stats',
       author='Kytos Team',

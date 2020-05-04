@@ -4,8 +4,8 @@ from abc import ABCMeta, abstractmethod
 from random import randint
 
 from flask import Response, request
-from kytos.core import log
 
+from kytos.core import log
 from napps.kytos.of_stats.stats import FlowStats, PortStats
 from napps.kytos.of_stats.user_speed import UserSpeed
 

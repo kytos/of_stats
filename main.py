@@ -1,8 +1,8 @@
 """Statistics application."""
-from kytos.core import KytosNApp, log, rest
-from kytos.core.helpers import listen_to
 from pyof.v0x01.controller2switch.stats_request import StatsType
 
+from kytos.core import KytosNApp, log, rest
+from kytos.core.helpers import listen_to
 from napps.kytos.of_stats import settings
 from napps.kytos.of_stats.stats import FlowStats, PortStats
 from napps.kytos.of_stats.stats_api import FlowStatsAPI, PortStatsAPI, StatsAPI

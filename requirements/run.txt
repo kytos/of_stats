@@ -4,4 +4,5 @@
 #
 #    pip-compile --output-file run.txt run.in
 #
+-e git+git://github.com/kytos/of_core.git#egg=of_core
 rrdtool==0.1.11

@@ -1,0 +1,8 @@
+language: python
+python:
+  - "3.6"
+install:
+  - sudo apt-get install --no-install-recommends -y librrd-dev
+  - pip install tox
+script:
+  - tox

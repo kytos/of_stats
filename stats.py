@@ -247,11 +247,7 @@ class RRD:
         # If no values are found, add zeros.
         if not latest:
             latest = [0] * len(cols)
-
-        # pylint: disable=R1721
-        latest_fetched = {k: v for k, v in zip(cols, latest)}
-
-        return latest_fetched
+        return dict(zip(cols, latest))
 
     @classmethod
     def _get_archives(cls):

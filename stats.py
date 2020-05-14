@@ -5,18 +5,20 @@ from pathlib import Path
 
 import pyof.v0x01.controller2switch.common as v0x01
 import rrdtool
-from kytos.core import KytosEvent, log
-from napps.kytos.of_core.flow import PortStats as OFCorePortStats
-# v0x01 and v0x04 PortStats are version independent
-from napps.kytos.of_core.flow import FlowFactory
-# Disable warning about ungrouped pyof imports due to isort
-from pyof.v0x01.common.phy_port import Port  # pylint: disable=C0412
+# pylint: disable=C0411,C0412
+from pyof.v0x01.common.phy_port import Port
 from pyof.v0x01.controller2switch.common import AggregateStatsRequest
 from pyof.v0x01.controller2switch.stats_request import StatsRequest, StatsType
 from pyof.v0x04.controller2switch import multipart_request as v0x04
 from pyof.v0x04.controller2switch.common import MultipartType
 from pyof.v0x04.controller2switch.multipart_request import MultipartRequest
 
+from kytos.core import KytosEvent, log
+# v0x01 and v0x04 PortStats are version independent
+from napps.kytos.of_core.flow import FlowFactory
+from napps.kytos.of_core.flow import PortStats as OFCorePortStats
+
+# Disable warning about ungrouped pyof imports due to isort
 from . import settings
 
 
@@ -154,6 +156,7 @@ class RRD:
         with settings.RRD_LOCK:
             rrdtool.create(*options)
 
+    # pylint: disable=R0914
     def fetch(self, index, start=None, end=None, n_points=None):
         """Fetch average values from rrd.
 
@@ -244,7 +247,7 @@ class RRD:
         # If no values are found, add zeros.
         if not latest:
             latest = [0] * len(cols)
-        return {k: v for k, v in zip(cols, latest)}
+        return dict(zip(cols, latest))
 
     @classmethod
     def _get_archives(cls):

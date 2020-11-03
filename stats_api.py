@@ -148,7 +148,7 @@ class PortStatsAPI(StatsAPI):
 
     @staticmethod
     def get_random_port_stats():
-        """Generate a random port stats."""
+        """Generate random port stats."""
         stats = {'data': {
             'timestamps': list(range(1508532494, 1508533094, 10)),
             'rx_bytes': [randint(100_000, 1_000_000) for _ in range(30)],
@@ -170,7 +170,7 @@ class PortStatsAPI(StatsAPI):
             row['name'] = iface.name
             row['mac'] = iface.address
             row['speed'] = self._get_speed(iface)
-            yield self._add_utilization(row, iface)
+            yield self._add_utilization(row)
 
     def get_stats(self):
         """See :meth:`get_port_stats`."""
@@ -196,7 +196,7 @@ class PortStatsAPI(StatsAPI):
             iface.set_custom_speed(user_speed)
         return iface.speed
 
-    def _add_utilization(self, row, iface):  # pylint: disable=unused-argument
+    def _add_utilization(self, row):
         """Calculate utilization and also add port number."""
         speed = row['speed']
         if speed is None:

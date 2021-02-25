@@ -6,7 +6,8 @@
 #
 -e git+git://github.com/kytos/kytos.git#egg=kytos
 -e git+git://github.com/kytos/python-openflow.git#egg=python-openflow
--e git+git://github.com/kytos/of_core.git#egg=of_core
+-e git+git://github.com/kytos/of_core.git#egg=kytos-of-core
+-e git+git://github.com/kytos/kronos.git#egg=kytos-kronos
 -e .
 astroid==2.3.3            # via pylint
 click==7.1.1                # via flask
@@ -16,17 +17,17 @@ flask==1.1.2
 isort==4.3.21             # via pylint, yala
 itsdangerous==1.1.0        # via flask
 jinja2==2.11.1             # via flask
-lazy-object-proxy==1.4    # via astroid
-markupsafe==1.1.1           # via jinja2
+lazy-object-proxy==1.4.3   # via astroid
+markupsafe==1.1.1         # via jinja2
 mccabe==0.6.1             # via flake8, pylint
 pycodestyle==2.4.0        # via flake8, yala
-pydocstyle==2.1.1         # via yala
+pydocstyle==5.1.1         # via yala
 pyflakes==1.5.0           # via flake8
 pylint==2.4.4             # via yala
-rrdtool==0.1.11
-six==1.14.0               # via astroid, mando, pydocstyle, pylint
-snowballstemmer==1.2.1    # via pydocstyle
-tox==3.2.1
+pytest==5.4.1             # via -r requirements/dev.in
+six==1.15.0               # via astroid, mando, pydocstyle, pylint
+snowballstemmer==2.0.0    # via pydocstyle
+tox==3.14.6
 werkzeug==1.0.1          # via flask
-wrapt==1.11            # via astroid
+wrapt==1.11.2            # via astroid
 yala==2.2.0

@@ -25,14 +25,16 @@ class Stats(metaclass=ABCMeta):
 
     rrd = None
 
-    def __init__(self, msg_out_buffer):
-        """Store a reference to the controller's msg_out buffer.
+    def __init__(self, msg_out_buffer, msg_app_buffer):
+        """Store a reference to the controller's buffers.
 
         Args:
             msg_out_buffer: Where to send events.
+            msg_app_buffer: Where to send events to other NApps.
 
         """
         self._buffer = msg_out_buffer
+        self._app_buffer = msg_app_buffer
 
     @abstractmethod
     def request(self, conn):
@@ -47,6 +49,13 @@ class Stats(metaclass=ABCMeta):
             name='kytos/of_stats.messages.out.ofpt_stats_request',
             content={'message': req, 'destination': conn})
         self._buffer.put(event)
+
+    @classmethod
+    def _save_event_callback(cls, _event, data, error):
+        """Execute the callback to handle with kronos event to save data."""
+        if error:
+            log.error(f'Can\'t save stats in kytos/kronos: {error}')
+        log.debug(data)
 
 
 class RRD:
@@ -348,8 +357,6 @@ class AggregateStats(Stats):
 class FlowStats(Stats):
     """Deal with FlowStats message."""
 
-    rrd = RRD('flows', ('packet_count', 'byte_count'))
-
     def request(self, conn):
         """Ask for flow stats."""
         request = self._get_versioned_request(conn.protocol.version)
@@ -366,8 +373,7 @@ class FlowStats(Stats):
             multipart_type=MultipartType.OFPMP_FLOW,
             body=v0x04.FlowStatsRequest())
 
-    @classmethod
-    def listen(cls, switch, flows_stats):
+    def listen(self, switch, flows_stats):
         """Receive flow stats."""
         flow_class = FlowFactory.get_class(switch)
         for flow_stat in flows_stats:
@@ -378,7 +384,22 @@ class FlowStats(Stats):
             if controller_flow:
                 controller_flow.stats = flow.stats
 
-            # Update RRD database
-            cls.rrd.update((switch.id, flow.id),
-                           packet_count=flow.stats.packet_count,
-                           byte_count=flow.stats.byte_count)
+            # Save packet_count using kytos/kronos
+            namespace = f'kytos.kronos.{switch.id}.flow_id.{flow.id}'
+            content = {'namespace': namespace,
+                       'value': {'packet_count': flow.stats.packet_count},
+                       'callback': self._save_event_callback,
+                       'timestamp': time.time()}
+
+            event = KytosEvent(name='kytos.kronos.save', content=content)
+            self._app_buffer.put(event)
+
+            # Save byte_count using kytos/kronos
+            namespace = f'kytos.kronos.{switch.id}.flow_id.{flow.id}'
+            content = {'namespace': namespace,
+                       'value': {'byte_count': flow.stats.byte_count},
+                       'callback': self._save_event_callback,
+                       'timestamp': time.time()}
+
+            event = KytosEvent(name='kytos.kronos.save', content=content)
+            self._app_buffer.put(event)

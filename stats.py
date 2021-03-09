@@ -17,9 +17,7 @@ from kytos.core import KytosEvent, log
 # v0x01 and v0x04 PortStats are version independent
 from napps.kytos.of_core.flow import FlowFactory
 from napps.kytos.of_core.flow import PortStats as OFCorePortStats
-
-# Disable warning about ungrouped pyof imports due to isort
-from . import settings
+from napps.kytos.of_stats import settings
 
 
 class Stats(metaclass=ABCMeta):

@@ -17,8 +17,11 @@ class Main(KytosNApp):
 
         # Initialize statistics
         msg_out = self.controller.buffers.msg_out
-        self._stats = {StatsType.OFPST_PORT.value: PortStats(msg_out),
-                       StatsType.OFPST_FLOW.value: FlowStats(msg_out)}
+        app_buffer = self.controller.buffers.app
+        self._stats = {StatsType.OFPST_PORT.value: PortStats(msg_out,
+                                                             app_buffer),
+                       StatsType.OFPST_FLOW.value: FlowStats(msg_out,
+                                                             app_buffer)}
 
         StatsAPI.controller = self.controller
 

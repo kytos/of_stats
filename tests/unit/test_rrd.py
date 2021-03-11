@@ -50,7 +50,6 @@ class TestRRD(unittest.TestCase):
         self.assertEqual(second, list(tstamps)[0])
         self.assertEqual((1.0, 1.0), rows[0])
 
-    @patch('napps.kytos.of_stats.stats.Path')
     def test_non_existent_rrd(self):
         """Test fetch_latest with non existent rrd."""
         # obj = path_mock.return_value.exists.return_value = False

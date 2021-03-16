@@ -272,9 +272,6 @@ class RRD:
 class PortStats(Stats):
     """Deal with PortStats messages."""
 
-    rrd = RRD('ports', [rt + 'x_' + stat for stat in
-                        ('bytes', 'dropped', 'errors') for rt in 'rt'])
-
     def request(self, conn):
         """Ask for port stats."""
         request = self._get_versioned_request(conn.protocol.version)
@@ -291,22 +288,31 @@ class PortStats(Stats):
             multipart_type=MultipartType.OFPMP_PORT_STATS,
             body=v0x04.PortStatsRequest())
 
-    @classmethod
-    def listen(cls, switch, ports_stats):
+    def listen(self, switch, ports_stats):
         """Receive port stats."""
         debug_msg = 'Received port %s stats of switch %s: rx_bytes %s,' \
                     ' tx_bytes %s, rx_dropped %s, tx_dropped %s,' \
                     ' rx_errors %s, tx_errors %s'
 
         for port_stat in ports_stats:
-            cls._update_controller_interface(switch, port_stat)
-            cls.rrd.update((switch.id, port_stat.port_no.value),
-                           rx_bytes=port_stat.rx_bytes.value,
-                           tx_bytes=port_stat.tx_bytes.value,
-                           rx_dropped=port_stat.rx_dropped.value,
-                           tx_dropped=port_stat.tx_dropped.value,
-                           rx_errors=port_stat.rx_errors.value,
-                           tx_errors=port_stat.tx_errors.value)
+            self._update_controller_interface(switch, port_stat)
+
+            statistics_to_send = {'rx_bytes': port_stat.rx_bytes.value,
+                                  'tx_bytes': port_stat.tx_bytes.value,
+                                  'rx_dropped': port_stat.rx_dropped.value,
+                                  'tx_dropped': port_stat.tx_dropped.value,
+                                  'rx_errors': port_stat.rx_errors.value,
+                                  'tx_errors': port_stat.tx_errors.value}
+
+            port_no = port_stat.port_no.value
+
+            namespace = f'kytos.kronos.{switch.id}.port_no.{port_no}'
+            content = {'namespace': namespace,
+                       'value': statistics_to_send,
+                       'callback': self._save_event_callback,
+                       'timestamp': time.time()}
+            event = KytosEvent(name='kytos.kronos.save', content=content)
+            self._app_buffer.put(event)
 
             log.debug(debug_msg, port_stat.port_no.value, switch.id,
                       port_stat.rx_bytes.value, port_stat.tx_bytes.value,

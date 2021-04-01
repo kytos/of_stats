@@ -332,8 +332,6 @@ class PortStats(Stats):
 class AggregateStats(Stats):
     """Deal with AggregateStats message."""
 
-    _rrd = RRD('aggr', ('packet_count', 'byte_count', 'flow_count'))
-
     def request(self, conn):
         """Ask for flow stats."""
         body = AggregateStatsRequest()  # Port.OFPP_NONE and All Tables
@@ -342,8 +340,7 @@ class AggregateStats(Stats):
         log.debug('Aggregate Stats request for switch %s sent.',
                   conn.switch.dpid)
 
-    @classmethod
-    def listen(cls, switch, aggregate_stats):
+    def listen(self, switch, aggregate_stats):
         """Receive flow stats."""
         debug_msg = 'Received aggregate stats from switch {}:' \
                     ' packet_count {}, byte_count {}, flow_count {}'
@@ -351,13 +348,24 @@ class AggregateStats(Stats):
         for aggregate in aggregate_stats:
             # need to choose the _id to aggregate_stats
             # this class isn't used yet.
-            cls.rrd.update((switch.id,),
-                           packet_count=aggregate.packet_count.value,
-                           byte_count=aggregate.byte_count.value,
-                           flow_count=aggregate.flow_count.value)
 
             log.debug(debug_msg, switch.id, aggregate.packet_count.value,
                       aggregate.byte_count.value, aggregate.flow_count.value)
+
+            # Save aggregate stats using kytos/kronos
+            namespace = f'kytos.kronos.aggregated_stats.{switch.id}'
+            stats_to_send = {'aggregate_id': aggregate.id,
+                             'packet_count': aggregate.packet_count.value,
+                             'byte_count': aggregate.byte_count.value,
+                             'flow_count': aggregate.flow_count.value}
+
+            content = {'namespace': namespace,
+                       'value': stats_to_send,
+                       'callback': self._save_event_callback,
+                       'timestamp': time.time()}
+
+            event = KytosEvent(name='kytos.kronos.save', content=content)
+            self._app_buffer.put(event)
 
 
 class FlowStats(Stats):

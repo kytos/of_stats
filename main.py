@@ -1,11 +1,10 @@
 """Statistics application."""
 from pyof.v0x01.controller2switch.stats_request import StatsType
 
-from kytos.core import KytosNApp, log, rest
+from kytos.core import KytosNApp, log
 from kytos.core.helpers import listen_to
 from napps.kytos.of_stats import settings
 from napps.kytos.of_stats.stats import FlowStats, PortStats
-from napps.kytos.of_stats.stats_api import FlowStatsAPI, PortStatsAPI, StatsAPI
 
 
 class Main(KytosNApp):
@@ -22,8 +21,6 @@ class Main(KytosNApp):
                                                              app_buffer),
                        StatsType.OFPST_FLOW.value: FlowStats(msg_out,
                                                              app_buffer)}
-
-        StatsAPI.controller = self.controller
 
     def execute(self):
         """Query all switches sequentially and then sleep before repeating."""
@@ -70,37 +67,3 @@ class Main(KytosNApp):
         else:
             log.debug('No listener for %s = %s in %s.', stats_type.name,
                       stats_type.value, list(self._stats.keys()))
-
-    # REST API
-
-    @rest('v1/<dpid>/ports/<int:port>')
-    @staticmethod
-    def get_port_stats(dpid, port):
-        """Return statistics for ``dpid`` and ``port``."""
-        return PortStatsAPI.get_port_stats(dpid, port)
-
-    @rest('v1/<dpid>/ports')
-    @staticmethod
-    def get_ports_list(dpid):
-        """Return ports of ``dpid``."""
-        return PortStatsAPI.get_ports_list(dpid)
-
-    @rest('v1/<dpid>/flows/<flow_hash>')
-    @staticmethod
-    def get_flow_stats(dpid, flow_hash):
-        """Return statistics of a flow in ``dpid``."""
-        return FlowStatsAPI.get_flow_stats(dpid, flow_hash)
-
-    @rest('v1/<dpid>/flows')
-    @staticmethod
-    def get_flow_list(dpid):
-        """Return all flows of ``dpid``."""
-        return FlowStatsAPI.get_flow_list(dpid)
-
-    @rest('v1/<dpid>/ports/<int:port>/random')
-    @staticmethod
-    def get_random_interface_stats(dpid, port):
-        """Fake data for testing."""
-        # Ignore dpid and port
-        # pylint: disable=unused-argument
-        return PortStatsAPI.get_random_port_stats()

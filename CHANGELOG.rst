@@ -23,11 +23,35 @@ Fixed
 Security
 ========
 
+[2.0] - 2021-04-16
+******************
+Added
+=====
+- Add `kytos/kronos` as dependency.
+
+Changed
+=======
+- Replace RRDtool by `kytos/kronos` to persist the statistics.
+- Refactor `AggregateStats`, `FlowStats` and `PortStats` class to use
+  `kytos/kronos` to save data.
+- Update `requirements.txt` file.
+- Changed `setup.py` to catch exception for linter error.
+- Update OpenAPI and `README.rst` file.
+- Move unit tests to `tests/unit` dir.
+
+Removed
+=======
+- Removed RRDtool.
+
+Fixed
+=====
+- Fixed linter issues.
+
 [1.1.0] - 2018-04-20
 ********************
 Added
 =====
-- Add speed to port statistics..
+- Add speed to port statistics.
 - Multipart requests for switches with OpenFlow 1.3.
 - Use flow factory.
 - Add support for OF 0x04 (1.3).

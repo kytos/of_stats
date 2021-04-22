@@ -25,27 +25,25 @@ Security
 
 [2.0] - 2021-04-16
 ******************
-Added
-=====
-- Add `kytos/kronos` as dependency.
-
 Changed
 =======
-- Replace RRDtool by `kytos/kronos` to persist the statistics.
-- Refactor `AggregateStats`, `FlowStats` and `PortStats` class to use
-  `kytos/kronos` to save data.
-- Update `requirements.txt` file.
-- Changed `setup.py` to catch exception for linter error.
-- Update OpenAPI and `README.rst` file.
-- Move unit tests to `tests/unit` dir.
+- Replaced RRDtool by ``kytos/kronos`` to persist the statistics.
+- Refactored ``AggregateStats``, ``FlowStats`` and ``PortStats`` class
+  to use ``kytos/kronos`` to save data.
+- Changed ``setup.py`` to catch exception for linter error.
+- Updated ``requirements.txt`` file.
+- Updated OpenAPI and ``README.rst`` file.
+- Moved unit tests to ``tests/unit`` dir.
+- Added ``kytos/kronos`` as dependency.
 
 Removed
 =======
-- Removed RRDtool.
+- Removed RRDtool dependencies.
 
 Fixed
 =====
 - Fixed linter issues.
+
 
 [1.1.0] - 2018-04-20
 ********************

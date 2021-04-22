@@ -4,7 +4,7 @@
   "name": "of_stats",
   "description": "Provide statistics of openflow switches.",
   "version": "1.1.0",
-  "napp_dependencies": ["kytos/of_core"],
+  "napp_dependencies": ["kytos/of_core", "kytos/kronos"],
   "license": "MIT",
   "url": "https://github.com/kytos/kytos-napps.git",
   "tags": ["openflow", "statistics"]

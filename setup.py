@@ -8,7 +8,7 @@ import shutil
 import sys
 from abc import abstractmethod
 from pathlib import Path
-from subprocess import call, check_call
+from subprocess import CalledProcessError, call, check_call
 
 from setuptools import Command, setup
 from setuptools.command.develop import develop
@@ -67,16 +67,74 @@ class Cleaner(SimpleCommand):
         call('make -C docs/ clean', shell=True)
 
 
-class TestCoverage(SimpleCommand):
+# pylint: disable=attribute-defined-outside-init, abstract-method
+class TestCommand(Command):
+    """Test tags decorators."""
+
+    user_options = [
+        ('size=', None, 'Specify the size of tests to be executed.'),
+        ('type=', None, 'Specify the type of tests to be executed.'),
+    ]
+
+    sizes = ('small', 'medium', 'large', 'all')
+    types = ('unit', 'integration', 'e2e')
+
+    def get_args(self):
+        """Return args to be used in test command."""
+        return '--size %s --type %s' % (self.size, self.type)
+
+    def initialize_options(self):
+        """Set default size and type args."""
+        self.size = 'all'
+        self.type = 'unit'
+
+    def finalize_options(self):
+        """Post-process."""
+        try:
+            assert self.size in self.sizes, ('ERROR: Invalid size:'
+                                             f':{self.size}')
+            assert self.type in self.types, ('ERROR: Invalid type:'
+                                             f':{self.type}')
+        except AssertionError as exc:
+            print(exc)
+            sys.exit(-1)
+
+
+class Test(TestCommand):
+    """Run all tests."""
+
+    description = 'run tests and display results'
+
+    def get_args(self):
+        """Return args to be used in test command."""
+        markers = self.size
+        if markers == "small":
+            markers = 'not medium and not large'
+        size_args = "" if self.size == "all" else "-m '%s'" % markers
+        return '--addopts="tests/%s %s"' % (self.type, size_args)
+
+    def run(self):
+        """Run tests."""
+        cmd = 'python setup.py pytest %s' % self.get_args()
+        try:
+            check_call(cmd, shell=True)
+        except CalledProcessError as exc:
+            print(exc)
+
+
+class TestCoverage(Test):
     """Display test coverage."""
 
-    description = 'run unit tests and display code coverage'
+    description = 'run tests and display code coverage'
 
     def run(self):
         """Run unittest quietly and display coverage report."""
-        cmd = 'coverage3 run -m unittest discover -qs napps/kytos' \
-              ' && coverage3 report'
-        call(cmd, shell=True)
+        cmd = 'coverage3 run setup.py pytest %s' % self.get_args()
+        cmd += ' && coverage3 report'
+        try:
+            check_call(cmd, shell=True)
+        except CalledProcessError as exc:
+            print(exc)
 
 
 class Linter(SimpleCommand):
@@ -87,7 +145,11 @@ class Linter(SimpleCommand):
     def run(self):
         """Run yala."""
         print('Yala is running. It may take several seconds...')
-        check_call('yala *.py', shell=True)
+        try:
+            check_call('yala *.py', shell=True)
+        except CalledProcessError:
+            print('Linter check failed. Fix the error(s) above and try again.')
+            sys.exit(-1)
 
 
 class CITest(SimpleCommand):
@@ -185,6 +247,8 @@ setup(name=NAPP_NAME,
       author_email='of-ng-dev@ncc.unesp.br',
       license='MIT',
       install_requires=['setuptools >= 36.0.1'],
+      setup_requires=['pytest-runner'],
+      tests_require=['pytest'],
       extras_require={
           'dev': [
               'coverage',

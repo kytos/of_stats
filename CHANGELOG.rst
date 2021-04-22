@@ -1,19 +1,16 @@
 #########
 Changelog
 #########
-All notable changes to the kytos-napps project will be documented in this file.
+
+All notable changes to the ``of_stats`` project will be documented in this file.
 
 [UNRELEASED] - Under development
 ********************************
 Added
 =====
-- Added support for automated tests and CI with Travis.
 
 Changed
 =======
-- Changed README.rst to include some info badges.
-- Yala substitutes Pylama as the main linter checker.
-- Updated requirements.
 
 Deprecated
 ==========
@@ -23,26 +20,32 @@ Removed
 
 Fixed
 =====
-- Enable of_stats in Scrutinizer.
-- Fixed some linter issues.
-- Fixed user_speed unit test.
-- Fixed setup.py changing it to one inspired by of_core.
 
 Security
 ========
 
-[2.0] - 2021-04-16
+Changed
+=======
+
+
+[2.0] - 2021-04-22
 ******************
+Added
+=====
+- Added support for automated tests and CI with Travis.
+
 Changed
 =======
 - Replaced RRDtool by ``kytos/kronos`` to persist the statistics.
 - Refactored ``AggregateStats``, ``FlowStats`` and ``PortStats`` class
   to use ``kytos/kronos`` to save data.
-- Changed ``setup.py`` to catch exception for linter error.
 - Updated ``requirements.txt`` file.
-- Updated OpenAPI and ``README.rst`` file.
 - Moved unit tests to ``tests/unit`` dir.
+- Changed ``setup.py`` to catch exception for linter error.
+- Updated OpenAPI and ``README.rst`` file.
 - Added ``kytos/kronos`` as dependency.
+- Yala substitutes Pylama as the main linter checker.
+- Changed README.rst to include some info badges.
 
 Removed
 =======
@@ -50,7 +53,10 @@ Removed
 
 Fixed
 =====
+- Fixed ``user_speed`` unit test.
+- Fixed ``setup.py`` changing it to one inspired by ``of_core``.
 - Fixed linter issues.
+- Enable ``of_stats`` in Scrutinizer.
 
 
 [1.1.0] - 2018-04-20

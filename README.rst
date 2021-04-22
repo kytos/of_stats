@@ -2,6 +2,14 @@
 Overview
 ########
 
+**WARNING: As previously announced on our communication channels, the Kytos
+project will enter the "shutdown" phase on May 31, 2021. After this date,
+only critical patches (security and core bug fixes) will be accepted, and the
+project will be in "critical-only" mode for another six months (until November
+30, 2021). For more information visit the FAQ at <https://kytos.io/faq>. We'll
+have eternal gratitude to the entire community of developers and users that made
+the project so far.**
+
 |License| |Build| |Coverage| |Quality|
 
 In order to manage a network, an administrator must have updated and reliable
@@ -11,9 +19,9 @@ networks.
 
 To achieve that, this Network Application collects statistical data provided by
 the switches connected to the controller. We *do not use SNMP protocol* because
-the OpenFlow protocol already provide this data. The data is stored to be
-provided later through a REST API. This API can supply instant data,
-historical data, and also some calculated information.
+the OpenFlow protocol already provide this data. The data is stored using the 
+Network Application Kronos. All the stored data can be accessed using Kronos
+NApp.
 
 The provided statistics, per switch, are:
 
@@ -25,33 +33,6 @@ The provided statistics, per switch, are:
 ##########
 Installing
 ##########
-
-************
-RRDTool
-************
-.. note:: We currently use rrd to keep persistence in data, but future
-    versions of this napp will allow you to choose what kind of backend you
-    want to use.
-
-==============
-Linux packages
-==============
-Currently, this NApp uses `rrdtool <http://www.rrdtool.org>`__ and its Python
-wrapper needs several packages to be installed and run. In Ubuntu, you can
-install them by:
-
-.. code-block:: shell
-
-   apt install rrdtool python3.6-dev librrd-dev
-
-===============
-Python packages
-===============
-With the Linux packages above installed, just run:
-
-.. code-block:: shell
-
-   pip install rrdtool
 
 *****************
 NApp installation
@@ -92,8 +73,7 @@ on how it works.
 Settings file
 *************
 You can customize settings like how long to wait before asking the switches
-for more statistics, as well as rrdtool-related configuration in the file
-``settings.py``.
+for more statistics in the file ``settings.py``.
 
 ****************
 Custom bandwidth
@@ -193,25 +173,6 @@ New settings are not applied
 Some changes in ``settings.py`` require recreating the database. Check the
 section ``Deleting the database`` below.
 
-******************
-Unexpected results
-******************
-If you get fewer points than expected for a specific flow or port, it might be
-that there's not enough data to calculate all of them. Try to specify the
-"start" parameter using a later time that you know traffic was being collected.
-
-You may also try to delete RRD databases (see below) so they can be recreated
-with the latest configuration.
-
-*********************
-Deleting the database
-*********************
-You don't have to stop the controller to delete the databases. This NApp will
-recreate them as needed after you run (no need to restart the NApp):
-
-.. code-block:: shell
-
-   rm -rf rrd/flows rrd/ports
 
 .. |License| image:: https://img.shields.io/github/license/kytos/kytos.svg
    :target: https://github.com/kytos/of_stats/blob/master/LICENSE

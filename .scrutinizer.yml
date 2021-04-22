@@ -1,6 +1,0 @@
-build:
-    dependencies:
-        # "override" to not run inferred "python setup.py install" and
-        # "pip install -r requirements.txt"
-        override:
-            - sudo apt-get install --no-install-recommends -y librrd-dev

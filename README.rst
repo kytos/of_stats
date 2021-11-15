@@ -56,7 +56,7 @@ To run the NApp from the source code, install the requirements and run:
 
 .. code-block:: shell
 
-   git clone https://github.com/kytos/of_stats.git
+   git clone https://github.com/kytos-ng/of_stats.git
    cd of_stats
    kytos napps install kytos/of_stats
 
@@ -175,7 +175,7 @@ section ``Deleting the database`` below.
 
 
 .. |License| image:: https://img.shields.io/github/license/kytos/kytos.svg
-   :target: https://github.com/kytos/of_stats/blob/master/LICENSE
+   :target: https://github.com/kytos-ng/of_stats/blob/master/LICENSE
 .. |Build| image:: https://scrutinizer-ci.com/g/kytos/of_stats/badges/build.png?b=master
   :alt: Build status
   :target: https://scrutinizer-ci.com/g/kytos/of_stats/?branch=master

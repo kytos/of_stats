@@ -242,7 +242,7 @@ def symlink_if_different(path, target):
 setup(name=NAPP_NAME,
       version=NAPP_VERSION,
       description='Core NApps developed by Kytos Team',
-      url='http://github.com/kytos/of_stats',
+      url='http://github.com/kytos-ng/of_stats',
       author='Kytos Team',
       author_email='of-ng-dev@ncc.unesp.br',
       license='MIT',

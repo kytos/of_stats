@@ -4,4 +4,4 @@
 #
 #    pip-compile --output-file run.txt run.in
 #
--e git+git://github.com/kytos/of_core.git#egg=of_core
+-e git+https://github.com/kytos-ng/of_core.git#egg=of_core

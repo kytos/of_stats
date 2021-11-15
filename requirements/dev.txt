@@ -4,10 +4,10 @@
 #
 #    pip-compile --output-file dev.txt dev.in
 #
--e git+git://github.com/kytos/kytos.git#egg=kytos
--e git+git://github.com/kytos/python-openflow.git#egg=python-openflow
--e git+git://github.com/kytos/of_core.git#egg=kytos-of-core
--e git+git://github.com/kytos/kronos.git#egg=kytos-kronos
+-e git+https://github.com/kytos-ng/kytos.git#egg=kytos
+-e git+https://github.com/kytos-ng/python-openflow.git#egg=python-openflow
+-e git+https://github.com/kytos-ng/of_core.git#egg=kytos_of_core
+-e git+https://github.com/kytos-ng/kronos.git#egg=kytos-kronos
 -e .
 astroid==2.3.3            # via pylint
 click==7.1.1                # via flask

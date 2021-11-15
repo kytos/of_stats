@@ -1,7 +1,6 @@
 # All runtime dependencies
-flask
--e git+git://github.com/kytos/kytos.git#egg=kytos
--e git+git://github.com/kytos/python-openflow.git#egg=python-openflow
+-e git+https://github.com/kytos-ng/kytos.git#egg=kytos
+-e git+https://github.com/kytos-ng/python-openflow.git#egg=python-openflow
 
 # Development tools
 yala
